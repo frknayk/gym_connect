@@ -1,10 +1,7 @@
-# Connect X Environment With PyGame Render Option
+# Connect4 Environment With PyGame
 
 ## Description
-- In this project it 
-
-## Getting Started with UI Mode
-- Demonstration of UI is below : main page, training page and inference page
+- Connect4 and Connect2 environment with two option : 'PyGame Mode' (for renders) and 'Headless Mode' for terminal only.
 
 ## Installation
 1. Run the command below
