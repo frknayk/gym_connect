@@ -8,8 +8,9 @@ from enums.colors import Colors
 from enums.player import PLAYER
 
 
-class ConnectFour:
+class ConnectPyGame:
     def __init__(self, number_of_rows=6, number_of_cols=7):
+        pygame.init()
         self.NUM_ROWS = number_of_rows
         self.NUM_COLS = number_of_cols
         self.OFFSET = 200
@@ -291,6 +292,5 @@ class ConnectFour:
                 self.draw_board(board)
 
 if __name__ == "__main__":
-    pygame.init()
-    connect_two_game = ConnectFour(7,7)
+    connect_two_game = ConnectPyGame(6,7)
     connect_two_game.run()
