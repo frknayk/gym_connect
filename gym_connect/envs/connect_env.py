@@ -11,6 +11,7 @@ from gym_connect.envs.enums.colors import Colors
 from gym_connect.envs.enums.player import PLAYER
 from gym_connect.envs.enums.run_mode import MODE, PLAY_MODE
 from gym_connect.envs.enums.results_enum import RESULTS
+from gym_connect.envs.renderer import Renderer
 
 class ConnectEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -25,6 +26,7 @@ class ConnectEnv(gym.Env):
         self.__mode_play = play_mode
         self.__state = self.create_game_board()
         self.__PLAYER = PLAYER.FIRST
+        self.__renderer = Renderer(self.__NUM_ROWS,self.__NUM_COLS)
         self.state_dim = self.__NUM_ROWS * self.__NUM_COLS
         self.action_dim = 1
 
@@ -74,27 +76,32 @@ class ConnectEnv(gym.Env):
         board = self.__state
         is_game_won, player = self.__check_win_vertical(board)
         if is_game_won:
-            print("PLAYER : {0} is WON! (vertical check)".format(player))
+            msg = "PLAYER : {0} is WON! (vertical check)".format(player)
+            self.__print_situation(msg)
             return RESULTS.WON, player
 
         is_game_won, player = self.__check_win_horizontal(board)
         if is_game_won:
-            print("PLAYER : {0} is WON! (horizontal check)".format(player))
+            msg = "PLAYER : {0} is WON! (horizontal check)".format(player)
+            self.__print_situation(msg)
             return RESULTS.WON, player
 
         is_game_won, player = self.__check_win_diagonal_pos(board)
         if is_game_won:
-            print("PLAYER : {0} is WON! (diagonal pos check)".format(player))
+            msg = "PLAYER : {0} is WON! (diagonal pos  check)".format(player)
+            self.__print_situation(msg)
             return RESULTS.WON, player
 
         is_game_won, player = self.__check_win_diagonal_neg(board)
         if is_game_won:
-            print("PLAYER : {0} is WON! (diagonal neg check)".format(player))
+            msg = "PLAYER : {0} is WON! (diagonal neg  check)".format(player)
+            self.__print_situation(msg)
             return RESULTS.WON, player
 
         is_game_draw = self.__check_draw()
         if is_game_draw:
-            print("PLAYER : {0} is WON! (diagonal neg check)".format(player))
+            msg = "DRAW !"
+            self.__print_situation(msg)
             return RESULTS.DRAW, PLAYER.NONE
 
         else:
@@ -193,10 +200,10 @@ class ConnectEnv(gym.Env):
             or (self.__mode_game is MODE.RENDER_DEBUG) :
             print("TURN :   {0}".format(self.__PLAYER))
 
-    def __print_situation(self, situation):
+    def __print_situation(self, situation_msg):
         if (self.__mode_game is MODE.TERMINAL_DEBUG) \
             or (self.__mode_game is MODE.RENDER_DEBUG) :
-            print("PLAYER : {0} is WON! (vertical check)".format(situation))
+            print("PLAYER : {0} is WON! (vertical check)".format(situation_msg))
 
     def create_game_board(self):
         """
@@ -244,7 +251,7 @@ class ConnectEnv(gym.Env):
         pass
 
     def render(self):
-        pass
+        self.__renderer.draw_board(self.__state)
 
     def reset(self):
         self.__state = self.create_game_board()
@@ -272,8 +279,12 @@ class ConnectEnv(gym.Env):
                 # Evaulate resulted move : How is the game resulted ? : WON,DRAW or NOT_FINISHED ...
                 # Thanks to game results also obtain gym info
                 state, is_done, reward = self.__evaulate_action_result(player,game_result)
+                
+                if not is_done:
+                    self.__flip_players()
+                else:
+                    self.__renderer.close()
 
-                self.__flip_players()
                 self.__print_to_board()
             else:
                 print('\n!!!!! WARNING !!!!!')

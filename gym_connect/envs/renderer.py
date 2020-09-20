@@ -4,6 +4,7 @@ import pygame
 import sys
 import math
 from gym_connect.envs.enums.colors import Colors
+from gym_connect.envs.enums.player import PLAYER
 
 class Renderer:
     def __init__(self, number_of_rows=6, number_of_cols=7):
@@ -65,3 +66,6 @@ class Renderer:
 
         self.update_pygame()
 
+    def close(self):
+        pygame.time.wait(3000)
+        sys.exit()
