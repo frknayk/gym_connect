@@ -8,13 +8,13 @@ from enums.results_enum import RESULTS
 
 class ConnectHeadless(object):
     def __init__(self, number_of_rows=6, number_of_cols=7,
-                debug_mode=MODE.TERMINAL_DEBUG, run_mode = PLAY_MODE.HUMAN_VS_HUMAN):
+                game_mode=MODE.TERMINAL_DEBUG, play_mode = PLAY_MODE.HUMAN_VS_HUMAN):
         self.__NUM_ROWS = number_of_rows
         self.__NUM_COLS = number_of_cols
-        self.__board = self.create_game_board()
+        self.__state = self.create_game_board()
         self.__PLAYER = PLAYER.FIRST
-        self.__mode_debug = debug_mode
-        self.__mode_run = run_mode
+        self.__mode_debug = game_mode
+        self.__mode_run = play_mode
         self.state_dim = self.__NUM_ROWS * self.__NUM_COLS
         self.action_dim = 1
 
@@ -35,7 +35,7 @@ class ConnectHeadless(object):
         is_row_found = False
         row_selected = None
         for row in reversed(range(self.__NUM_ROWS)):
-            if self.__board[row][column] == 0:
+            if self.__state[row][column] == 0:
                 row_selected = row
                 is_row_found = True
                 break
@@ -58,12 +58,12 @@ class ConnectHeadless(object):
         """
         Set position of a stone on the board
         """
-        self.__board[row][col] = piece
+        self.__state[row][col] = piece
 
     def __check_win(self):
         result = RESULTS.NOT_FINISHED
 
-        board = self.__board
+        board = self.__state
         is_game_won, player = self.__check_win_vertical(board)
         if is_game_won:
             print("PLAYER : {0} is WON! (vertical check)".format(player))
@@ -85,7 +85,7 @@ class ConnectHeadless(object):
             return RESULTS.WON, player
 
         is_game_draw = self.__check_draw()
-        if is_game_won:
+        if is_game_draw:
             print("PLAYER : {0} is WON! (diagonal neg check)".format(player))
             return RESULTS.DRAW, PLAYER.NONE
 
@@ -163,8 +163,8 @@ class ConnectHeadless(object):
         Returns:
         - bool: True if the situation is draw
         """
-        if np.all((self.__board == 0)) is False:
-            is_any_place_left = 0 in self.__board
+        if np.all((self.__state == 0)) is False:
+            is_any_place_left = 0 in self.__state
             return is_any_place_left
         else:
             return False
@@ -175,7 +175,7 @@ class ConnectHeadless(object):
         """
         if (self.__mode_debug is MODE.TERMINAL_DEBUG) \
             or (self.__mode_debug is MODE.RENDER_DEBUG) :
-            print(self.__board)
+            print(self.__state)
 
     def __print_player(self):
         """
@@ -188,7 +188,7 @@ class ConnectHeadless(object):
     def __print_situation(self, situation):
         if (self.__mode_debug is MODE.TERMINAL_DEBUG) \
             or (self.__mode_debug is MODE.RENDER_DEBUG) :
-            print("PLAYER : {0} is WON! (vertical check)".format(player))
+            print("PLAYER : {0} is WON! (vertical check)".format(situation))
 
     def create_game_board(self):
         """
@@ -209,7 +209,7 @@ class ConnectHeadless(object):
 
     def make_state(self, player):
         state_dict = {
-            'board':self.__board,
+            'board':self.__state,
             'player' : self.__PLAYER
         }
         return state_dict
@@ -239,8 +239,8 @@ class ConnectHeadless(object):
         pass
 
     def reset(self):
-        self.__board = self.create_game_board()
-        return self.__board
+        self.__state = self.create_game_board()
+        return self.__state
     
     def step(self, action):
         reward = -1
@@ -282,3 +282,14 @@ class ConnectHeadless(object):
             is_done = None
 
         return state, reward, is_done
+
+
+if __name__ == "__main__":
+    env = ConnectEnv(number_of_rows=6,number_of_cols=7,game_mode=MODE.RENDER_NO_DEBUG)
+    state = env.reset()
+    MAX_EPISODES = 100
+    MAX_STEPS = 100
+    for eps in range(MAX_EPISODES): 
+        for step in range(MAX_STEPS):
+            action = env.get_action_from_terminal()
+            next_state,reward,done = env.step(action)
