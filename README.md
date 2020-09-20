@@ -8,8 +8,8 @@
    - ``` pip install -e . ```
 
 ## Optional
-There is also human to human mode rendered here 
-- ```archive/connect_four_pygame_mouse.py``` 
+There is also human to human mode rendered here, run the script below
+- ```connect_four_pygame_mouse.py``` 
 
 ## Prerequisites
    1. gym
