@@ -285,7 +285,7 @@ class ConnectHeadless(object):
 
 
 if __name__ == "__main__":
-    env = ConnectEnv(number_of_rows=6,number_of_cols=7,game_mode=MODE.RENDER_NO_DEBUG)
+    env = ConnectHeadless(number_of_rows=6,number_of_cols=7,game_mode=MODE.RENDER_NO_DEBUG)
     state = env.reset()
     MAX_EPISODES = 100
     MAX_STEPS = 100

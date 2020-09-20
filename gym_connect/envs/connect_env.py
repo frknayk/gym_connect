@@ -1,19 +1,20 @@
 #!/usr/bin/python3
 
-import gym
-from gym import error, spaces, utils
-from gym.utils import seeding
-
 import numpy as np
 import sys
 import math
 
-from enums.player import PLAYER
-from enums.run_mode import MODE, PLAY_MODE
-from enums.results_enum import RESULTS
-
+import gym
+from gym import error, spaces, utils
+from gym.utils import seeding
+from gym_connect.envs.enums.colors import Colors
+from gym_connect.envs.enums.player import PLAYER
+from gym_connect.envs.enums.run_mode import MODE, PLAY_MODE
+from gym_connect.envs.enums.results_enum import RESULTS
 
 class ConnectEnv(gym.Env):
+    metadata = {'render.modes': ['human']}
+
     def __init__(self, 
                 number_of_rows=6, number_of_cols=7,
                 game_mode=MODE.TERMINAL_DEBUG, 
@@ -289,14 +290,3 @@ class ConnectEnv(gym.Env):
             is_done = None
 
         return state, reward, is_done
-
-
-if __name__ == "__main__":
-    env = ConnectEnv(number_of_rows=6,number_of_cols=7,game_mode=MODE.TERMINAL_DEBUG)
-    state = env.reset()
-    MAX_EPISODES = 100
-    MAX_STEPS = 100
-    for eps in range(MAX_EPISODES): 
-        for step in range(MAX_STEPS):
-            action = env.get_action_from_terminal()
-            next_state,reward,done = env.step(action)
