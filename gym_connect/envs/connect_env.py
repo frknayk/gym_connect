@@ -25,8 +25,8 @@ class ConnectEnv(gym.Env):
         self.__mode_game = game_mode
         self.__mode_play = play_mode
         self.__state = self.create_game_board()
-        self.__PLAYER = PLAYER.FIRST
         self.__renderer = Renderer(self.__NUM_ROWS,self.__NUM_COLS)
+        self.PLAYER = PLAYER.FIRST
         self.state_dim = self.__NUM_ROWS * self.__NUM_COLS
         self.action_dim = 1
 
@@ -34,14 +34,14 @@ class ConnectEnv(gym.Env):
         is_row_found = False
         row, is_row_found = self.__get_row(column)
         if is_row_found:
-            self.__set_position(row, column, self.__PLAYER.value)
+            self.__set_position(row, column, self.PLAYER.value)
         return is_row_found
 
     def __flip_players(self):
-        if self.__PLAYER is PLAYER.FIRST:
-            self.__PLAYER = PLAYER.SECOND
-        elif self.__PLAYER is PLAYER.SECOND:
-            self.__PLAYER = PLAYER.FIRST
+        if self.PLAYER is PLAYER.FIRST:
+            self.PLAYER = PLAYER.SECOND
+        elif self.PLAYER is PLAYER.SECOND:
+            self.PLAYER = PLAYER.FIRST
 
     def __get_row(self, column):
         is_row_found = False
@@ -76,32 +76,27 @@ class ConnectEnv(gym.Env):
         board = self.__state
         is_game_won, player = self.__check_win_vertical(board)
         if is_game_won:
-            msg = "PLAYER : {0} is WON! (vertical check)".format(player)
-            self.__print_situation(msg)
+            self.__print_situation(player.name, "vertical check")
             return RESULTS.WON, player
 
         is_game_won, player = self.__check_win_horizontal(board)
         if is_game_won:
-            msg = "PLAYER : {0} is WON! (horizontal check)".format(player)
-            self.__print_situation(msg)
+            self.__print_situation(player.name, "horizontal check")
             return RESULTS.WON, player
 
         is_game_won, player = self.__check_win_diagonal_pos(board)
         if is_game_won:
-            msg = "PLAYER : {0} is WON! (diagonal pos  check)".format(player)
-            self.__print_situation(msg)
+            self.__print_situation(player.name, "diagonal pos check")
             return RESULTS.WON, player
 
         is_game_won, player = self.__check_win_diagonal_neg(board)
         if is_game_won:
-            msg = "PLAYER : {0} is WON! (diagonal neg  check)".format(player)
-            self.__print_situation(msg)
+            self.__print_situation(player.name, "diagonal neg check")
             return RESULTS.WON, player
 
         is_game_draw = self.__check_draw()
         if is_game_draw:
-            msg = "DRAW !"
-            self.__print_situation(msg)
+            print("DRAW !")
             return RESULTS.DRAW, PLAYER.NONE
 
         else:
@@ -198,12 +193,12 @@ class ConnectEnv(gym.Env):
         """
         if (self.__mode_game is MODE.TERMINAL_DEBUG) \
             or (self.__mode_game is MODE.RENDER_DEBUG) :
-            print("TURN :   {0}".format(self.__PLAYER))
+            print("TURN :   {0}".format(self.PLAYER))
 
-    def __print_situation(self, situation_msg):
+    def __print_situation(self, player_name, condition):
         if (self.__mode_game is MODE.TERMINAL_DEBUG) \
             or (self.__mode_game is MODE.RENDER_DEBUG) :
-            print("PLAYER : {0} is WON! (vertical check)".format(situation_msg))
+            print("{0} player is WON w/ {1}".format(player_name, condition))
 
     def create_game_board(self):
         """
@@ -225,7 +220,7 @@ class ConnectEnv(gym.Env):
     def make_state(self, player):
         state_dict = {
             'board':self.__state,
-            'player' : self.__PLAYER
+            'player' : self.PLAYER
         }
         return state_dict
 
@@ -238,17 +233,26 @@ class ConnectEnv(gym.Env):
             return PLAYER.NONE
 
     def get_random_action(self):
-        return 1
+        """Select a random action from possible actions"""
+        valid_actions = self.get_valid_actions()
+        random_action = np.random.choice(valid_actions,1)
+        return random_action[0]
 
     def get_action_from_terminal(self):
         action = input('enter the number of row, starting from 0 to N : ')
         return int(action)
 
-    def get_valid_actions(self, action):
+    def get_valid_actions(self):
         """
-        Check if the action lies in the action space
+        Get list of possible actions at the current state
         """
-        pass
+        possible_actions = np.arange(0,self.__NUM_COLS)
+        valid_actions = []
+        for act in possible_actions:
+            col = self.__state[:,act]
+            if 0 in col:
+                valid_actions.append(act)
+        return valid_actions
 
     def render(self):
         self.__renderer.draw_board(self.__state)
@@ -288,14 +292,11 @@ class ConnectEnv(gym.Env):
                 self.__print_to_board()
             else:
                 print('\n!!!!! WARNING !!!!!')
-                print('Given row is already occupied! Please select an occupied')
-                print('BTW do you really know how to play this game ?')
-                print('---------------------------------------------------------------')
+                print('Given row is already occupied! Please select an occupied\n')
 
         # ABORT GAME
         else:
-            print('Invalid ACTION SELECTED GOD SAKE! ABORT MISSON')
-            print('I REPEAT ABORT MI')
+            print('Invalid ACTION is ENCOUNTERED!')
             state = None
             reward = None
             is_done = None
