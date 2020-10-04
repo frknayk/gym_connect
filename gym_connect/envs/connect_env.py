@@ -3,6 +3,7 @@
 import numpy as np
 import sys
 import math
+from copy import deepcopy
 
 import gym
 from gym import error, spaces, utils
@@ -23,12 +24,12 @@ class ConnectEnv(gym.Env):
         # Private Variables
         self.__NUM_ROWS = number_of_rows
         self.__NUM_COLS = number_of_cols
-        self.__mode_play = play_mode
-        self.__state = self.create_game_board()
         self.__renderer = Renderer(self.__NUM_ROWS,self.__NUM_COLS)
         # General variables
+        self.mode_play = play_mode
         self.mode_game = game_mode
         self.PLAYER = PLAYER.FIRST
+        self.state = self.create_game_board()
         self.state_dim = self.__NUM_ROWS * self.__NUM_COLS
         self.action_dim = 1
 
@@ -49,13 +50,13 @@ class ConnectEnv(gym.Env):
         is_row_found = False
         row_selected = None
         for row in reversed(range(self.__NUM_ROWS)):
-            if self.__state[row][column] == 0:
+            if self.state[row][column] == 0:
                 row_selected = row
                 is_row_found = True
                 break
         return row_selected, is_row_found
 
-    def __evaulate_action_result(self, player, game_result):
+    def evaulate_action_result(self, player, game_result):
         is_done = False
         reward = -1
         if game_result is RESULTS.WON:
@@ -72,10 +73,10 @@ class ConnectEnv(gym.Env):
         """
         Set position of a stone on the board
         """
-        self.__state[row][col] = piece
+        self.state[row][col] = piece
 
     def __check_win(self):
-        board = self.__state
+        board = self.state
         is_game_won, player = self.__check_win_vertical(board)
         if is_game_won:
             self.__print_situation(player.name, "vertical check")
@@ -175,8 +176,8 @@ class ConnectEnv(gym.Env):
         Returns:
         - bool: True if the situation is draw
         """
-        if np.all((self.__state == 0)) is False:
-            is_any_place_left = 0 in self.__state
+        if np.all((self.state == 0)) is False:
+            is_any_place_left = 0 in self.state
             return is_any_place_left
         else:
             return False
@@ -187,7 +188,7 @@ class ConnectEnv(gym.Env):
         """
         if (self.mode_game is MODE.TERMINAL_DEBUG) \
             or (self.mode_game is MODE.RENDER_DEBUG) :
-            print(self.__state)
+            print(self.state)
 
     def __print_player(self):
         """
@@ -221,7 +222,7 @@ class ConnectEnv(gym.Env):
 
     def make_state(self, player):
         state_dict = {
-            'board':self.__state,
+            'board':self.state,
             'player' : self.PLAYER
         }
         return state_dict
@@ -251,20 +252,36 @@ class ConnectEnv(gym.Env):
         possible_actions = np.arange(0,self.__NUM_COLS)
         valid_actions = []
         for act in possible_actions:
-            col = self.__state[:,act]
+            col = self.state[:,act]
             if 0 in col:
                 valid_actions.append(act)
         return valid_actions
 
+    def copy(self):
+        """Return deep copied env"""
+        new_env = gym.make('connect-v0')
+        # Get class attributes
+        class_attributes = self.__dict__.keys()
+        # Get value of the attribute in original object
+        # In this case, it is 'self'    
+        for attr in class_attributes:
+            if not (attr == 'spec' or attr == '_ConnectEnv__renderer'):
+                # setattr( new_env, attr, deepcopy(getattr(self,attr)) )
+                setattr( new_env, attr, deepcopy(getattr(self,attr)) )
+
+        # setattr( new_env, 'state', deepcopy(getattr(self, 'state')) )
+
+        return new_env
+
     def render(self):
-        self.__renderer.draw_board(self.__state)
+        self.__renderer.draw_board(self.state)
 
     def close_renderer(self):
         self.__renderer.close()
 
     def reset(self):
-        self.__state = self.create_game_board()
-        return self.__state
+        self.state = self.create_game_board()
+        return self.state
     
     def step(self, action):
         reward = -1
@@ -287,7 +304,7 @@ class ConnectEnv(gym.Env):
 
                 # Evaulate resulted move : How is the game resulted ? : WON,DRAW or NOT_FINISHED ...
                 # Thanks to game results also obtain gym info
-                state, is_done, reward = self.__evaulate_action_result(player,game_result)
+                state, is_done, reward = self.evaulate_action_result(player,game_result)
                 
                 if not is_done:
                     self.__flip_players()
