@@ -75,7 +75,7 @@ class ConnectEnv(gym.Env):
         """
         self.state[row][col] = piece
 
-    def __check_win(self):
+    def check_win(self):
         board = self.state
         is_game_won, player = self.__check_win_vertical(board)
         if is_game_won:
@@ -300,7 +300,7 @@ class ConnectEnv(gym.Env):
             if is_row_found is True:
 
                 # Check if the move is the winning move
-                game_result, player = self.__check_win()
+                game_result, player = self.check_win()
 
                 # Evaulate resulted move : How is the game resulted ? : WON,DRAW or NOT_FINISHED ...
                 # Thanks to game results also obtain gym info
