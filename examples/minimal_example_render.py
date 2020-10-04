@@ -9,6 +9,7 @@ state = env.reset()
 # Enable debug mode for rendering mode
 from gym_connect.envs.enums.run_mode import MODE
 env.mode_game = MODE.RENDER_DEBUG
+env.set_renderer()
 
 is_done = False
 while not is_done:

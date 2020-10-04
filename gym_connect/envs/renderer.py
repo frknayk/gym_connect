@@ -5,10 +5,10 @@ import sys
 import math
 from gym_connect.envs.enums.colors import Colors
 from gym_connect.envs.enums.player import PLAYER
+from gym_connect.envs.enums.run_mode import MODE
 
 class Renderer:
-    def __init__(self, number_of_rows=6, number_of_cols=7):
-        pygame.init()
+    def __init__(self, number_of_rows=6, number_of_cols=7, game_mode=MODE.RENDER_NO_DEBUG):
         self.NUM_ROWS = number_of_rows
         self.NUM_COLS = number_of_cols
         self.OFFSET = 200
@@ -16,6 +16,7 @@ class Renderer:
         self.WIDTH = self.NUM_COLS * self.SQUARE_SIZE
         self.HEIGHT = self.NUM_ROWS * self.SQUARE_SIZE + int(self.OFFSET)
         self.RADIUS = int(self.SQUARE_SIZE/2 - 5)
+        pygame.init()
         self.screen = self.set_screen()
         self.font = pygame.font.SysFont("Comic Sans MS", int(self.OFFSET/4))
 

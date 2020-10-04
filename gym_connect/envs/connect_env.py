@@ -24,7 +24,7 @@ class ConnectEnv(gym.Env):
         # Private Variables
         self.__NUM_ROWS = number_of_rows
         self.__NUM_COLS = number_of_cols
-        self.__renderer = Renderer(self.__NUM_ROWS,self.__NUM_COLS)
+        self.__renderer = None
         # General variables
         self.mode_play = play_mode
         self.mode_game = game_mode
@@ -32,6 +32,10 @@ class ConnectEnv(gym.Env):
         self.state = self.create_game_board()
         self.state_dim = self.__NUM_ROWS * self.__NUM_COLS
         self.action_dim = 1
+
+    def set_renderer(self):
+        if self.mode_game is MODE.RENDER_NO_DEBUG or self.mode_game is MODE.RENDER_DEBUG:
+            self.__renderer = Renderer(self.__NUM_ROWS,self.__NUM_COLS, game_mode=self.mode_game)
 
     def __place_stone(self, column):
         is_row_found = False
