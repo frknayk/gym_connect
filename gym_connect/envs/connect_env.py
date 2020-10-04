@@ -18,14 +18,16 @@ class ConnectEnv(gym.Env):
 
     def __init__(self, 
                 number_of_rows=6, number_of_cols=7,
-                game_mode=MODE.TERMINAL_DEBUG, 
+                game_mode=MODE.TERMINAL_NO_DEBUG, 
                 play_mode = PLAY_MODE.HUMAN_VS_HUMAN):
+        # Private Variables
         self.__NUM_ROWS = number_of_rows
         self.__NUM_COLS = number_of_cols
-        self.__mode_game = game_mode
         self.__mode_play = play_mode
         self.__state = self.create_game_board()
         self.__renderer = Renderer(self.__NUM_ROWS,self.__NUM_COLS)
+        # General variables
+        self.mode_game = game_mode
         self.PLAYER = PLAYER.FIRST
         self.state_dim = self.__NUM_ROWS * self.__NUM_COLS
         self.action_dim = 1
@@ -183,21 +185,21 @@ class ConnectEnv(gym.Env):
         """
         Print board to terminal fancier 
         """
-        if (self.__mode_game is MODE.TERMINAL_DEBUG) \
-            or (self.__mode_game is MODE.RENDER_DEBUG) :
+        if (self.mode_game is MODE.TERMINAL_DEBUG) \
+            or (self.mode_game is MODE.RENDER_DEBUG) :
             print(self.__state)
 
     def __print_player(self):
         """
         Print board to terminal fancier 
         """
-        if (self.__mode_game is MODE.TERMINAL_DEBUG) \
-            or (self.__mode_game is MODE.RENDER_DEBUG) :
+        if (self.mode_game is MODE.TERMINAL_DEBUG) \
+            or (self.mode_game is MODE.RENDER_DEBUG) :
             print("TURN :   {0}".format(self.PLAYER))
 
     def __print_situation(self, player_name, condition):
-        if (self.__mode_game is MODE.TERMINAL_DEBUG) \
-            or (self.__mode_game is MODE.RENDER_DEBUG) :
+        if (self.mode_game is MODE.TERMINAL_DEBUG) \
+            or (self.mode_game is MODE.RENDER_DEBUG) :
             print("{0} player is WON w/ {1}".format(player_name, condition))
 
     def create_game_board(self):
@@ -290,6 +292,9 @@ class ConnectEnv(gym.Env):
                 if not is_done:
                     self.__flip_players()
                 else:
+                    self.__print_to_board()
+                    if self.mode_game is MODE.RENDER_DEBUG:
+                        self.render()
                     return state, reward, is_done
 
                 self.__print_to_board()

@@ -11,6 +11,12 @@
 - State information is a dictionary such that includes board state and the player at that state.
 - For using renderer, add ```env.render()``` to the beginning of the loop, do not forget to
 close it after the game is done via ```env.close_renderer()```. Check the example *examples/minimal_example* here.
+- **Game Modes** : Check the game enumerations here : ```gym_connect.envs.enums.run_mode ```
+- **Enable Debug Mode** : 
+   ```
+   from gym_connect.envs.enums.run_mode import MODE
+   env.mode_game = MODE.TERMINAL_DEBUG
+   ```
 
 ## Usage
 1. Simplest usage

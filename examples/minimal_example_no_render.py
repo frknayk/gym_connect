@@ -8,6 +8,8 @@ state = env.reset()
 
 is_done = False
 while not is_done:
-    action = env.get_action_from_terminal()
+    action = env.get_random_action()
     next_state, reward, is_done = env.step(action)
     
+print("Winning player : ",next_state['player'].name)
+print(next_state['board'])
