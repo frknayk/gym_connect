@@ -5,7 +5,7 @@
 
 ## Installation
 1. Run the command below
-   - ``` pip install -e . ```
+   - ``` pip3 install -e . ```
 
 ## Usage
 1. Simplest usage
@@ -16,7 +16,8 @@
    state = env.reset()
    print(state)
    ```
-   
+2. Please check */examples* folder for playing with terminal and rendering examples
+
 ## Optional
 There is also human to human mode rendered here, run the script below
 - ```connect_four_pygame_mouse.py``` 
