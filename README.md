@@ -7,6 +7,11 @@
 1. Run the command below
    - ``` pip3 install -e . ```
 
+## Info
+- State information is a dictionary such that includes board state and the player at that state.
+- For using renderer, add ```env.render()``` to the beginning of the loop, do not forget to
+close it after the game is done via ```env.close_renderer()```. Check the example *examples/minimal_example* here.
+
 ## Usage
 1. Simplest usage
    ``` 

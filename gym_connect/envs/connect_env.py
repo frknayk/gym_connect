@@ -257,6 +257,9 @@ class ConnectEnv(gym.Env):
     def render(self):
         self.__renderer.draw_board(self.__state)
 
+    def close_renderer(self):
+        self.__renderer.close()
+
     def reset(self):
         self.__state = self.create_game_board()
         return self.__state
@@ -287,7 +290,7 @@ class ConnectEnv(gym.Env):
                 if not is_done:
                     self.__flip_players()
                 else:
-                    self.__renderer.close()
+                    return state, reward, is_done
 
                 self.__print_to_board()
             else:
