@@ -283,6 +283,16 @@ class ConnectEnv(gym.Env):
         self.state = self.create_game_board()
         return self.state
     
+    def is_game_over(self):
+        # Check if the move is the winning move
+        game_result, player = self.check_win()
+
+        # Evaulate resulted move : How is the game resulted ? : WON,DRAW or NOT_FINISHED ...
+        # Thanks to game results also obtain gym info
+        state, is_done, reward = self.evaulate_action_result(player,game_result)
+
+        return is_done
+
     def step(self, action):
         reward = -1
         is_done = False
