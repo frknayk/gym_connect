@@ -17,5 +17,4 @@ while not is_done:
     env.render()
     action = env.get_random_action()
     next_state, reward, is_done = env.step(action)
-
 env.close_renderer()

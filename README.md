@@ -29,6 +29,9 @@ close it after the game is done via ```env.close_renderer()```. Check the exampl
    ```
 2. Please check */examples* folder for playing with terminal and rendering examples
 
+## Quick Look
+<img width=350px height=416px src="images\gym_connect_output.png" alt="Project logo">
+
 ## Optional
 There is also human to human mode rendered here, run the script below
 - ```connect_four_pygame_mouse.py``` 

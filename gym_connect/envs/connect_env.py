@@ -183,9 +183,9 @@ class ConnectEnv(gym.Env):
         - bool: True if the situation is draw
         """
         if 0 in self.state:
-            return True
-        else:
             return False
+        else:
+            return True
 
     def __print_to_board(self):
         """
