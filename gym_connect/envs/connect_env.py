@@ -103,7 +103,9 @@ class ConnectEnv(gym.Env):
 
         is_game_draw = self.__check_draw()
         if is_game_draw:
-            print("DRAW !")
+            if (self.mode_game is MODE.TERMINAL_DEBUG) \
+                or (self.mode_game is MODE.RENDER_DEBUG) :
+                print("DRAW !")
             return RESULTS.DRAW, PLAYER.NONE
 
         else:
@@ -180,9 +182,8 @@ class ConnectEnv(gym.Env):
         Returns:
         - bool: True if the situation is draw
         """
-        if np.all((self.state == 0)) is False:
-            is_any_place_left = 0 in self.state
-            return is_any_place_left
+        if 0 in self.state:
+            return True
         else:
             return False
 
